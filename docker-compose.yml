@@ -1,41 +1,34 @@
 version: '3.8'
 
 services:
-  web:
-    build:
-      context: ./web
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb   # 🔹 Match with app.py
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "8080:8080"  # Expose web app on localhost:8080
-    depends_on:
-      - database     # Start database first
-      - cache        # Start cache too
+      - "5432:5432"
+
+  cache:
+    image: redis:6
+    ports:
+      - "6379:6379"
+
+  web:
+    build: ./web
+    ports:
+      - "8080:8080"
     environment:
       DB_HOST: database
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASS: password
-      DB_NAME: testdb
+      DB_NAME: mydb   # 🔹 Match with app.py
       CACHE_HOST: cache
       CACHE_PORT: 6379
-
-  database:
-    build:
-      context: ./database
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: testdb
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"  # Optional: expose if you want to access DB externally
-
-  cache:
-    build:
-      context: ./cache
-    ports:
-      - "6379:6379"  # Optional: expose if you want to connect externally
-
-# Define persistent volume for Postgres
-volumes:
-  db_data:
+    depends_on:
+      - database
+      - cache
