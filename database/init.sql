@@ -1,6 +1,3 @@
--- Create a new database
-CREATE DATABASE mydb;
-
 -- Connect to the new database
 \c mydb;
 
