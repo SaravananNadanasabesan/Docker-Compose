@@ -9,17 +9,17 @@ services:
       POSTGRES_DB: mydb
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    expose:
+    ports:
       - "5432"  # 👈 Replace "ports" with "expose"
 
   cache:
     image: redis:6
-    expose:
+    ports:
       - "6379"  # 👈 Same here
 
   web:
     build: ./web
-    expose:
+    ports:
       - "8080"  # 👈 No host port binding, enables scaling
     environment:
       DB_HOST: database
