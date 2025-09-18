@@ -6,27 +6,27 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_DB: mydb   # 🔹 Match with app.py
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    expose:
-      - "5432"  # ✅ Expose only for internal network access
+    ports:
+      - "5432:5432"
 
   cache:
     image: redis:6
-    expose:
-      - "6379"  # ✅ Expose only for internal network access
+    ports:
+      - "6379:6379"
 
   web:
     build: ./web
     ports:
-      - "8080:8080"  # ✅ This exposes to your EC2 host's port for browser access
+      - "8080:8080"
     environment:
       DB_HOST: database
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASS: password
-      DB_NAME: mydb
+      DB_NAME: mydb   # 🔹 Match with app.py
       CACHE_HOST: cache
       CACHE_PORT: 6379
     depends_on:
