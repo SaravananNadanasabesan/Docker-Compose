@@ -6,27 +6,27 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb   # 🔹 Match with app.py
+      POSTGRES_DB: mydb
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"  # 👈 Replace "ports" with "expose"
 
   cache:
     image: redis:6
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"  # 👈 Same here
 
   web:
     build: ./web
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"  # 👈 No host port binding, enables scaling
     environment:
       DB_HOST: database
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASS: password
-      DB_NAME: mydb   # 🔹 Match with app.py
+      DB_NAME: mydb
       CACHE_HOST: cache
       CACHE_PORT: 6379
     depends_on:
