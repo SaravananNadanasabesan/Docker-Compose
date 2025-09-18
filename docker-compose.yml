@@ -9,18 +9,18 @@ services:
       POSTGRES_DB: mydb
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432"  # 👈 Replace "ports" with "expose"
+    expose:
+      - "5432"  # ✅ Expose only for internal network access
 
   cache:
     image: redis:6
-    ports:
-      - "6379"  # 👈 Same here
+    expose:
+      - "6379"  # ✅ Expose only for internal network access
 
   web:
     build: ./web
     ports:
-      - "8080"  # 👈 No host port binding, enables scaling
+      - "8080:8080"  # ✅ This exposes to your EC2 host's port for browser access
     environment:
       DB_HOST: database
       DB_PORT: 5432
